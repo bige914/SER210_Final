@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Word Crunch</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="settings_description">
+        This is the settings menu, here you can change the difficulty
+        of the words, by difficulty we mean the length of the word between one of 3 choices
+        Easy, Medium, or Hard. The number represents the number of letters in the word to be displayed.
+    </string>
+
+    <string name="instructions_description">
+        Description of app goes here, to access the settings menu, return back to the home screen
+        and press the Menu button, from here you can choose to set the settings which includes
+        difficulty level, if you choose performance, here you can view your child\'s current scores
+        which includes how many words correct/incorrect and the percentage correct, also if you
+        would like to clear the data you can by taping the Reset button.
+    </string>
+
+    <string name="how_to_description">
+        This is an application to better learn spelling, you will be presented with a word with
+        missing letter/s, you will be presented with a short list of letters, put the correct letter/s
+        into the text field in order from left to right and hit the button that says GO.
+    </string>
+
+    <string name="definition">
+        Definition goes here, must be implemented
+    </string>
+
+</resources>

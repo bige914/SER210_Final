@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="edu.quinnipiac.ser210.wordcrunch.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_performanceFragment"
+            app:destination="@id/performanceFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_instructionsFragment"
+            app:destination="@id/instructionsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_howToFragment"
+            app:destination="@id/howToFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/performanceFragment"
+        android:name="edu.quinnipiac.ser210.wordcrunch.PerformanceFragment"
+        android:label="fragment_performance"
+        tools:layout="@layout/fragment_performance" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="edu.quinnipiac.ser210.wordcrunch.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/instructionsFragment"
+        android:name="edu.quinnipiac.ser210.wordcrunch.InstructionsFragment"
+        android:label="fragment_instructions"
+        tools:layout="@layout/fragment_instructions" />
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="edu.quinnipiac.ser210.wordcrunch.GameFragment"
+        android:label="fragment_game"
+        tools:layout="@layout/fragment_game" />
+    <fragment
+        android:id="@+id/howToFragment"
+        android:name="edu.quinnipiac.ser210.wordcrunch.HowToFragment"
+        android:label="fragment_how_to"
+        tools:layout="@layout/fragment_how_to" />
+</navigation>
