@@ -1,5 +1,8 @@
 package edu.quinnipiac.ser210.wordcrunch;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,12 +11,18 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -25,7 +34,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
     private NavController navController = null;
 
-    private final static String[] EASY_MODE = {"?","?","?","?"};
+    //private final static String[] EASY_MODE = {"?","?","?","?"};
     private String[] easy_mode;
     private final static String[] MEDIUM_MODE = {"?","?","?","?","?"};
     private final static String[] HARD_MODE = {"?","?","?","?","?","?"};
@@ -38,19 +47,21 @@ public class GameFragment extends Fragment implements View.OnClickListener{
     private int rand_easy;
     private int rand_medium;
     private int rand_hard;
-    private int rand_select;
+    protected int rand_select;
     private int rand_alpha;
 
-    private String complete_word;
+
+    private String complete_word = "";
     private String alpha;
 
 
-    private String[] itemStr = new String[2];
-    private String url1 = "https://api.datamuse.com/words?sp=";
-    private String url2 = "";
+    //private String[] itemStr = new String[2];
+    private String baseUrl = "https://api.datamuse.com/words?sp=";
+    private String baseWord = "";
     private String maxWords = "&max=10";
-    private String baseUrl = url1 + url2 + maxWords;
-    private String inpt = "";
+
+    //private String baseUrl = url1;
+    //private String inpt = ""; //ending output, string generated.
 
     private TargetWordHandler tWordHandler = new TargetWordHandler();
 
@@ -58,9 +69,16 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         // Required empty public constructor
     }
 
-    public void wordGenerator(){
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        complete_word = "";
+    }
+
+
+
+    public void wordGenerator(){
+        String[] EASY_MODE = {"?","?","?","?"};
         easy_mode = EASY_MODE;
 
         rand_easy = rand.nextInt(4);
@@ -76,18 +94,16 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         for (String s : easy_mode){
             builder.append(s);
         }
-        String tmp = builder.toString();
-        complete_word = tmp;
-
+        complete_word = builder.toString();
+/*
         for (int i = 0; i< builder.length(); i++){
             builder = new StringBuilder();
             builder.append(i);
-        }
-
-
+        }*/
+        baseWord=complete_word;
 
         //builder.delete(0, builder.length());
-        easy_mode = EASY_MODE;
+        //easy_mode = EASY_MODE;
 
 
     }
@@ -109,6 +125,8 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         goButton.setOnClickListener(this);
         Button resetButton = (Button) view.findViewById(R.id.new_word_button);
         resetButton.setOnClickListener(this);
+
+
     }
 
     @Override
@@ -118,35 +136,37 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         }
         if (v.getId() == R.id.go_button){
             //send completed problem to be scored
-            Toast.makeText(getContext(), "Go button " + Arrays.toString(EASY_MODE), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Go button " + Arrays.toString(easy_mode), Toast.LENGTH_SHORT).show();
         }
         if (v.getId() == R.id.new_word_button){
-            wordGenerator();
+            wordGenerator();//generate word ??a? <-- this type of format
+            new FetchWord().execute(complete_word);//send word for processing
             Toast.makeText(getContext(), "ResetButton " + complete_word, Toast.LENGTH_SHORT).show();
 
         }
 
     }
 
-/*
-    private class FetchTranslation extends AsyncTask<String,Void,String> {
+
+    private class FetchWord extends AsyncTask<String,Void,String> {
 
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(String... words) {
             HttpURLConnection urlConnection =null;
-            String translation = "";
+            String word = baseUrl + words[0] + maxWords;
 
 
             try{
-                String target = "target="+params[0]+"&";
-                String input = "input="+params[1];
+                String tmp = word;
+                //String target = "target="+params[0]+"&";
+                //String input = "input="+params[1];
 
-                URL url = new URL(baseUrl + target + input);
+                URL url = new URL(tmp);
 
                 urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.setRequestProperty("X-RapidAPI-Key","8db1d44a5emsh082121746e4b546p16eb75jsn4e81403eff20");
+                //urlConnection.setRequestMethod("GET");
+                //urlConnection.setRequestProperty("X-RapidAPI-Key","8db1d44a5emsh082121746e4b546p16eb75jsn4e81403eff20");
 
                 urlConnection.connect();
 
@@ -155,19 +175,19 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                     Log.e("no connection", "no connection");
                     return null;
                 }
-                translation = getStringFromBuffer(
+                word = getStringFromBuffer(
                         new BufferedReader(new InputStreamReader(urlConnection.getInputStream())));
-                assert translation != null;
-                Log.d("translation", translation);
+                assert word != null;
+                Log.d("word", word);
             }catch (Exception e){
-                Log.e("MainActivity","Error" + e.getMessage());
+                Log.e("GameDoInBackground","Error" + e.getMessage());
                 return null;
             }finally {
                 if(urlConnection !=null)
                     urlConnection.disconnect();
             }
 
-            return translation;
+            return word;
         }
 
         private String getStringFromBuffer(BufferedReader bufferedReader) throws Exception{
@@ -182,22 +202,27 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                 try{
                     bufferedReader.close();
                 }catch (IOException e){
-                    Log.e("MainActivity","Error" + e.getMessage());
+                    Log.e("GameFragment","Error" + e.getMessage());
                     return null;
                 }
             }
-            Log.d("translation", buffer.toString());
-            return  tWordHandler.getWord(buffer.toString());
+            Log.d("word", buffer.toString());
+
+            return  tWordHandler.getWord(buffer.toString(), rand_select);
         }
 
         @Override
         protected void onPostExecute(String result) {
 
             if(result != null){
-                Bundle bundle = new Bundle();
+                //Bundle bundle = new Bundle();
                 Log.d("onPostExecute",result);
 
-                bundle.putString("translation", result);
+                //bundle.putString("word", result);
+                //navController.navigate(R.id.action_gameFragment_self, bundle);
+                //assert getArguments() != null;
+                //inpt = getArguments().getString("word");
+
 
                 //reset edit text field
                 //word.getText().clear();
@@ -210,5 +235,5 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                 Log.d("onPostExecute","null");
         }
     }
-    */
+
 }
