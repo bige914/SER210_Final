@@ -56,6 +56,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
     private String new_word;//word on screen the player sees
     private String letters; //letters to be displayed with user_choices
     private String alpha;//the correct letter choice
+    private String input;//the value from user_input EditText
 
     private TextView user_view;//the displayed word
     private TextView user_choices;// the displayed characters
@@ -85,8 +86,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         String[] user_letters = {"","",""};
         String[] MEDIUM_MODE = {"?","?","?","?","?"};
         String[] HARD_MODE = {"?","?","?","?","?","?"};
-        String[] EASY_MODE = {"?","?","?","?"};
-        easy_mode = EASY_MODE;
+        easy_mode = new String[]{"?","?","?","?"};
 
         int rand_letter_pos = rand.nextInt(3);
 
@@ -144,6 +144,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         resetButton.setOnClickListener(this);
         user_view = (TextView) view.findViewById(R.id.word);
         user_choices = (TextView) view.findViewById(R.id.generated_letters);
+        user_input = (EditText) view.findViewById(R.id.missing_letter);
     }
 
     @Override
@@ -153,7 +154,18 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         }
         if (v.getId() == R.id.go_button){
             //send completed problem to be scored
-            Toast.makeText(getContext(), "Go button " + Arrays.toString(easy_mode), Toast.LENGTH_SHORT).show();
+            input = user_input.getText().toString();
+            if (input.equals("")){
+                Toast.makeText(getContext(), "Please select a letter.", Toast.LENGTH_SHORT).show();
+            }
+            else if (!input.equals(alpha)){
+                Toast.makeText(getContext(), "Oops wrong answer!", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(getContext(), "GOOD JOB!", Toast.LENGTH_SHORT).show();
+            }
+
+            //Toast.makeText(getContext(), "Go button " + Arrays.toString(easy_mode), Toast.LENGTH_SHORT).show();
         }
 
         if (v.getId() == R.id.new_word_button){
@@ -234,6 +246,8 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
                 user_view.setText(new_word);
                 user_choices.setText(letters);
+
+                user_input.getText().clear();
             }else
                 Log.d("onPostExecute","null");
         }
