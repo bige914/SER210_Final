@@ -16,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -34,10 +36,9 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
     private NavController navController = null;
 
-    //private final static String[] EASY_MODE = {"?","?","?","?"};
+
     private String[] easy_mode;
-    private final static String[] MEDIUM_MODE = {"?","?","?","?","?"};
-    private final static String[] HARD_MODE = {"?","?","?","?","?","?"};
+
     private final static String[] ALPHABET = {"a","b","c","d","e","f","g","h","i","j",
                                               "k","l","m","n","o","p","q","r","s","t",
                                               "u","v","w","x","y","z"};
@@ -47,21 +48,25 @@ public class GameFragment extends Fragment implements View.OnClickListener{
     private int rand_easy;
     private int rand_medium;
     private int rand_hard;
-    protected int rand_select;
+    private int rand_select;
     private int rand_alpha;
 
 
     private String complete_word = "";
-    private String alpha;
+    private String new_word;//word on screen the player sees
+    private String letters; //letters to be displayed with user_choices
+    private String alpha;//the correct letter choice
+
+    private TextView user_view;//the displayed word
+    private TextView user_choices;// the displayed characters
+
+    private EditText user_input;//the letter the user types into the game, check value against 'alpha'
 
 
-    //private String[] itemStr = new String[2];
+
     private String baseUrl = "https://api.datamuse.com/words?sp=";
-    private String baseWord = "";
+    //private String baseWord = "";
     private String maxWords = "&max=10";
-
-    //private String baseUrl = url1;
-    //private String inpt = ""; //ending output, string generated.
 
     private TargetWordHandler tWordHandler = new TargetWordHandler();
 
@@ -72,14 +77,18 @@ public class GameFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
 
 
     public void wordGenerator(){
+        String[] user_letters = {"","",""};
+        String[] MEDIUM_MODE = {"?","?","?","?","?"};
+        String[] HARD_MODE = {"?","?","?","?","?","?"};
         String[] EASY_MODE = {"?","?","?","?"};
         easy_mode = EASY_MODE;
+
+        int rand_letter_pos = rand.nextInt(3);
 
         rand_easy = rand.nextInt(4);
         rand_medium = rand.nextInt(5);
@@ -87,30 +96,38 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         rand_select = rand.nextInt(10);
         rand_alpha = rand.nextInt(26);
         alpha = ALPHABET[rand_alpha];
+        Log.d("alpha ", alpha);
+        user_letters[rand_letter_pos] = alpha;
+        for (int i=0; i < user_letters.length; i++){
+            if(user_letters[i].equals("")){
+                user_letters[i] = ALPHABET[rand.nextInt(26)];
+            }
+        }
 
         easy_mode[rand_easy] = alpha;
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder1 = new StringBuilder();
+
         for (String s : easy_mode){
-            builder.append(s);
+            builder1.append(s);
         }
-        complete_word = builder.toString();
-/*
-        for (int i = 0; i< builder.length(); i++){
-            builder = new StringBuilder();
-            builder.append(i);
-        }*/
-        baseWord=complete_word;
+        complete_word = builder1.toString();
 
-        //builder.delete(0, builder.length());
-        //easy_mode = EASY_MODE;
-
-
+        StringBuilder builder2 = new StringBuilder();
+        for (String s : user_letters){
+            builder2.append(s);
+        }
+        letters = builder2.toString();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        wordGenerator();//generate word ??a? <-- this type of format
+        new FetchWord().execute(complete_word);//send word for processing
+
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_game, container, false);
     }
@@ -125,8 +142,8 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         goButton.setOnClickListener(this);
         Button resetButton = (Button) view.findViewById(R.id.new_word_button);
         resetButton.setOnClickListener(this);
-
-
+        user_view = (TextView) view.findViewById(R.id.word);
+        user_choices = (TextView) view.findViewById(R.id.generated_letters);
     }
 
     @Override
@@ -138,38 +155,30 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             //send completed problem to be scored
             Toast.makeText(getContext(), "Go button " + Arrays.toString(easy_mode), Toast.LENGTH_SHORT).show();
         }
+
         if (v.getId() == R.id.new_word_button){
             wordGenerator();//generate word ??a? <-- this type of format
             new FetchWord().execute(complete_word);//send word for processing
             Toast.makeText(getContext(), "ResetButton " + complete_word, Toast.LENGTH_SHORT).show();
-
         }
-
     }
 
 
     private class FetchWord extends AsyncTask<String,Void,String> {
-
-
         @Override
         protected String doInBackground(String... words) {
             HttpURLConnection urlConnection =null;
             String word = baseUrl + words[0] + maxWords;
 
-
             try{
                 String tmp = word;
-                //String target = "target="+params[0]+"&";
-                //String input = "input="+params[1];
 
                 URL url = new URL(tmp);
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 //urlConnection.setRequestMethod("GET");
                 //urlConnection.setRequestProperty("X-RapidAPI-Key","8db1d44a5emsh082121746e4b546p16eb75jsn4e81403eff20");
-
                 urlConnection.connect();
-
 
                 if (urlConnection.getInputStream() == null) {
                     Log.e("no connection", "no connection");
@@ -217,20 +226,14 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             if(result != null){
                 //Bundle bundle = new Bundle();
                 Log.d("onPostExecute",result);
+                new_word = result;
+                char[] tmp = new_word.toCharArray();
+                tmp[rand_easy] = '_';
+                new_word = String.valueOf(tmp);
+                Log.d("new_word", new_word);
 
-                //bundle.putString("word", result);
-                //navController.navigate(R.id.action_gameFragment_self, bundle);
-                //assert getArguments() != null;
-                //inpt = getArguments().getString("word");
-
-
-                //reset edit text field
-                //word.getText().clear();
-
-
-                //pass along display data of translated word to resultFragment and move to said Fragment
-                //navController.navigate(R.id.action_mainFragment_to_resultFragment, bundle);
-
+                user_view.setText(new_word);
+                user_choices.setText(letters);
             }else
                 Log.d("onPostExecute","null");
         }
