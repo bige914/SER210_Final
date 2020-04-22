@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 
 /**
@@ -28,6 +29,7 @@ import android.widget.Toast;
 public class MainFragment extends Fragment implements View.OnClickListener {
     private ShareActionProvider provider;
     private NavController navController = null;
+    Toolbar toolbar;
 
     public MainFragment() {
         // Required empty public constructor
@@ -36,12 +38,15 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
         setHasOptionsMenu(true);
     }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         inflater.inflate(R.menu.menu_main, menu);
         MenuItem shareItem = menu.findItem(R.id.action_share);
         super.onCreateOptionsMenu(menu, inflater);
@@ -84,6 +89,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_main, container, false);
 

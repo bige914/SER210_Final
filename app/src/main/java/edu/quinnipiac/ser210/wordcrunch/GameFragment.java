@@ -123,11 +123,8 @@ public class GameFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         wordGenerator();//generate word ??a? <-- this type of format
         new FetchWord().execute(complete_word);//send word for processing
-
-
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_game, container, false);
     }
@@ -164,14 +161,13 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             else {
                 Toast.makeText(getContext(), "GOOD JOB!", Toast.LENGTH_SHORT).show();
             }
-
             //Toast.makeText(getContext(), "Go button " + Arrays.toString(easy_mode), Toast.LENGTH_SHORT).show();
         }
 
         if (v.getId() == R.id.new_word_button){
             wordGenerator();//generate word ??a? <-- this type of format
             new FetchWord().execute(complete_word);//send word for processing
-            Toast.makeText(getContext(), "ResetButton " + complete_word, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "ResetButton " + complete_word, Toast.LENGTH_SHORT).show();
         }
     }
 

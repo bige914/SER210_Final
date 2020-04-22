@@ -7,6 +7,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 import android.os.Bundle;
 
+import com.google.android.material.navigation.NavigationView;
+
 public class MainActivity extends AppCompatActivity {
     //DrawerLayout drawerLayout;
     //NavigationView navigationView;
@@ -21,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         //NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout);
         NavigationUI.setupActionBarWithNavController(this, navController);
