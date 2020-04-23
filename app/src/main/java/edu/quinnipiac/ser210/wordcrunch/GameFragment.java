@@ -50,11 +50,13 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
     private Random rand = new Random();
 
+
     private int rand_easy;
     private int rand_medium;
     private int rand_hard;
     private int rand_select;
     private int rand_alpha;
+    private int rand_diff;
 
 
     private String complete_word = "";
@@ -109,6 +111,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         rand_alpha = rand.nextInt(26);
         alpha = ALPHABET[rand_alpha];
         Log.d("alpha ", alpha);
+
         user_letters[rand_letter_pos] = alpha;
         for (int i=0; i < user_letters.length; i++){
             if(user_letters[i].equals("")){
@@ -119,14 +122,13 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         medium_mode[rand_medium] = alpha;
         hard_mode[rand_hard] = alpha;
 
-
         String[] diffLevel;
         switch (difficulty){
-            case "easy": diffLevel = easy_mode;
+            case "easy": diffLevel = easy_mode; rand_diff = rand_easy;
             break;
-            case "medium": diffLevel = medium_mode;
+            case "medium": diffLevel = medium_mode; rand_diff = rand_medium;
             break;
-            case "hard": diffLevel = hard_mode;
+            case "hard": diffLevel = hard_mode; rand_diff = rand_hard;
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + difficulty);
@@ -265,7 +267,8 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                 Log.d("onPostExecute",result);
                 new_word = result;
                 char[] tmp = new_word.toCharArray();
-                tmp[rand_easy] = '_';
+
+                tmp[rand_diff] = '_';
                 new_word = String.valueOf(tmp);
                 Log.d("new_word", new_word);
 
