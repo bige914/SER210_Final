@@ -2,6 +2,7 @@ package edu.quinnipiac.ser210.wordcrunch;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
@@ -38,6 +41,8 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
 
     private String[] easy_mode;
+    private String[] medium_mode;
+    private String[] hard_mode;
 
     private final static String[] ALPHABET = {"a","b","c","d","e","f","g","h","i","j",
                                               "k","l","m","n","o","p","q","r","s","t",
@@ -71,6 +76,8 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
     private TargetWordHandler tWordHandler = new TargetWordHandler();
 
+    private String difficulty;
+
     public GameFragment() {
         // Required empty public constructor
     }
@@ -78,15 +85,20 @@ public class GameFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = mPreferences.edit();
+
+        difficulty = mPreferences.getString(getString(R.string.difficulty), "");
     }
 
 
 
-    public void wordGenerator(){
+    private void wordGenerator(){
         String[] user_letters = {"","",""};
-        String[] MEDIUM_MODE = {"?","?","?","?","?"};
-        String[] HARD_MODE = {"?","?","?","?","?","?"};
         easy_mode = new String[]{"?","?","?","?"};
+        medium_mode = new String[]{"?","?","?","?","?"};
+        hard_mode = new String[]{"?","?","?","?","?","?"};
+
 
         int rand_letter_pos = rand.nextInt(3);
 
@@ -103,12 +115,28 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                 user_letters[i] = ALPHABET[rand.nextInt(26)];
             }
         }
-
         easy_mode[rand_easy] = alpha;
+        medium_mode[rand_medium] = alpha;
+        hard_mode[rand_hard] = alpha;
+
+
+        String[] diffLevel;
+        switch (difficulty){
+            case "easy": diffLevel = easy_mode;
+            break;
+            case "medium": diffLevel = medium_mode;
+            break;
+            case "hard": diffLevel = hard_mode;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + difficulty);
+        }
+
+
 
         StringBuilder builder1 = new StringBuilder();
 
-        for (String s : easy_mode){
+        for (String s : diffLevel){
             builder1.append(s);
         }
         complete_word = builder1.toString();
@@ -150,6 +178,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             navController.navigateUp();
         }
         if (v.getId() == R.id.go_button){
+            Log.d("difficulty", difficulty);
             //send completed problem to be scored
             input = user_input.getText().toString();
             if (input.equals("")){

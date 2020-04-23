@@ -4,6 +4,11 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="action_settings">Settings</string>
+    <string name="difficulty">edu.quinnipiac.ser210.wordcrunch.settings</string>
+
+    <string name="easy">easy</string>
+    <string name="medium">medium</string>
+    <string name="hard">hard</string>
 
     <string name="settings_description">
         This is the settings menu, here you can change the difficulty
