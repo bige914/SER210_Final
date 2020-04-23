@@ -130,8 +130,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             break;
             case "hard": diffLevel = hard_mode; rand_diff = rand_hard;
                 break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + difficulty);
+            default: diffLevel = easy_mode;
         }
 
 
