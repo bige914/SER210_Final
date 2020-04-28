@@ -1,5 +1,6 @@
 package edu.quinnipiac.ser210.wordcrunch;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,10 +9,12 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 /**
@@ -39,6 +42,19 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
         backButton.setOnClickListener(this);
         Button resetButton = (Button) view.findViewById(R.id.reset_button);
         resetButton.setOnClickListener(this);
+        TextView corrText = (TextView) view.findViewById(R.id.value_correct);
+        TextView incorrText = (TextView) view.findViewById(R.id.value_incorrect);
+        String correct;
+        try {
+            Intent intent = new Intent();
+
+            correct = intent.getStringExtra("correct");
+            corrText.setText(correct);
+        }
+        catch (NullPointerException e){
+            Log.e("PerfIntentFailure ", "Performance error: " + e);
+        }
+
     }
 
     @Override

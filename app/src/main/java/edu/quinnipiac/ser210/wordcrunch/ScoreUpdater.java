@@ -28,23 +28,22 @@ public class ScoreUpdater {
         context = context1;
     }
 
+    WordCrunchDatabaseHelper wCDataHandler = new WordCrunchDatabaseHelper(getContext());
 
-
-    //takes data from GameFragment
-    public void addCorrect(int addCorrect){
-        add_correct = addCorrect;
-    }
-    //takes data from GameFragment
-    public void addIncorrect(int addIncorrect){
-        add_incorrect = addIncorrect;
+    void executeSU(int correct, int incorrect){
+        add_correct = correct;
+        add_incorrect = incorrect;
+        sU();
     }
 
-    public ScoreUpdater(){
+
+
+    private void sU(){
 
         //create a cursor
-        SQLiteOpenHelper wordCrunchDataBaseHelper = new WordCrunchDatabaseHelper(context);
+        //SQLiteOpenHelper wordCrunchDataBaseHelper = new WordCrunchDatabaseHelper(context);
         try {
-            SQLiteDatabase db = wordCrunchDataBaseHelper.getReadableDatabase();
+            SQLiteDatabase db = wCDataHandler.getReadableDatabase();
             int _id = 1;
             Cursor cursor = db.query("PERFORMANCE",
                     new String[] {"CORRECT", "INCORRECT", "TOTAL"},
@@ -117,6 +116,7 @@ private class UpdateDB extends AsyncTask<Integer,Void,Boolean>{
         intent.putExtra("correct", add_correct);
         intent.putExtra("incorrect", add_incorrect);
         intent.putExtra("total", add_total);
+        getContext().startActivity(intent);
         }
         else Log.e("onPExecute", "intent failure to move data to PerformanceFragment");
         //super.onPostExecute(toDB);

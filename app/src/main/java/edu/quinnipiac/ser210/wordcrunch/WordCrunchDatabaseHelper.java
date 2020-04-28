@@ -8,11 +8,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
 public class WordCrunchDatabaseHelper extends SQLiteOpenHelper {
-    private static final String DB_NAME = "wordCrunch"; // the name of our database
+    private static final String DB_NAME = "wordCrunch.db"; // the name of our database
     private static final int DB_VERSION = 1; // the version of the database
+
+    private SQLiteDatabase database;
 
     WordCrunchDatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
+        database = getWritableDatabase();
     }
 
     @Override
@@ -32,6 +35,7 @@ public class WordCrunchDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         updateMyDatabase(db, oldVersion, newVersion);
+        onCreate(db);
 
     }
 

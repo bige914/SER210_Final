@@ -58,6 +58,10 @@ public class GameFragment extends Fragment implements View.OnClickListener{
     private int rand_alpha;
     private int rand_diff;
 
+    private int num_correct;
+    private int num_incorrect;
+//    private ScoreUpdater scoreUpdater = new ScoreUpdater();
+
 
     private String complete_word = "";
     private String new_word;//word on screen the player sees
@@ -186,9 +190,12 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                 Toast.makeText(getContext(), "Please select a letter.", Toast.LENGTH_SHORT).show();
             }
             else if (!input.equals(alpha)){
+                num_incorrect+=1;
                 Toast.makeText(getContext(), "Oops wrong answer!", Toast.LENGTH_SHORT).show();
             }
             else {
+                num_correct+=1;
+
                 Toast.makeText(getContext(), "GOOD JOB!", Toast.LENGTH_SHORT).show();
             }
             //Toast.makeText(getContext(), "Go button " + Arrays.toString(easy_mode), Toast.LENGTH_SHORT).show();
@@ -200,8 +207,13 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             //Toast.makeText(getContext(), "ResetButton " + complete_word, Toast.LENGTH_SHORT).show();
         }
     }
-
-
+/*
+    @Override
+    public void onDestroyView() {
+       //scoreUpdater.executeSU(num_correct, num_incorrect);
+        super.onDestroyView();
+    }
+*/
     private class FetchWord extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... words) {
