@@ -3,6 +3,7 @@ package edu.quinnipiac.ser210.wordcrunch;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -39,6 +40,8 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
     private NavController navController = null;
 
+    DatabaseHelper myDb;
+
 
     private String[] easy_mode;
     private String[] medium_mode;
@@ -60,7 +63,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
     private int num_correct;
     private int num_incorrect;
-//    private ScoreUpdater scoreUpdater = new ScoreUpdater();
+
 
 
     private String complete_word = "";
@@ -77,22 +80,24 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
 
     private String baseUrl = "https://api.datamuse.com/words?sp=";
-    //private String baseWord = "";
     private String maxWords = "&max=10";
 
     private TargetWordHandler tWordHandler = new TargetWordHandler();
 
     private String difficulty;
 
-    public GameFragment() {
-        // Required empty public constructor
+    public GameFragment()
+    {
+
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor editor = mPreferences.edit();
+        myDb = new DatabaseHelper(getContext());
 
         difficulty = mPreferences.getString(getString(R.string.difficulty), "");
     }
@@ -195,6 +200,8 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             }
             else {
                 num_correct+=1;
+                Cursor data = myDb.getData();
+                //int tmp = data.getInt(1); INDEXOUTOFBOUNDS EXCEPTION DATABASE NOT CREATED
 
                 Toast.makeText(getContext(), "GOOD JOB!", Toast.LENGTH_SHORT).show();
             }
@@ -207,13 +214,31 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             //Toast.makeText(getContext(), "ResetButton " + complete_word, Toast.LENGTH_SHORT).show();
         }
     }
-/*
+
     @Override
-    public void onDestroyView() {
-       //scoreUpdater.executeSU(num_correct, num_incorrect);
-        super.onDestroyView();
+    public void onPause() {
+        int total = num_correct+num_incorrect;
+        Cursor data = myDb.getData();
+        if (data.getCount() == 0){
+            Log.e("Database", "Database error nothing found");
+        }
+        else{
+            int cur_correct = data.getInt(1);
+            int new_correct = cur_correct+num_correct;
+            int cur_incorrect = data.getInt(2);
+            int new_incorrect = cur_incorrect+num_incorrect;
+            int cur_total = data.getInt(3);
+            int new_total = cur_total+total;
+
+            boolean isInserted = myDb.insertData(new_correct, new_incorrect, new_total);
+            if (isInserted){
+                Toast.makeText(getContext(), "Data inserted", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        super.onPause();
     }
-*/
+
     private class FetchWord extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... words) {

@@ -44,17 +44,6 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
         resetButton.setOnClickListener(this);
         TextView corrText = (TextView) view.findViewById(R.id.value_correct);
         TextView incorrText = (TextView) view.findViewById(R.id.value_incorrect);
-        String correct;
-        try {
-            Intent intent = new Intent();
-
-            correct = intent.getStringExtra("correct");
-            corrText.setText(correct);
-        }
-        catch (NullPointerException e){
-            Log.e("PerfIntentFailure ", "Performance error: " + e);
-        }
-
     }
 
     @Override

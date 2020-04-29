@@ -10,6 +10,7 @@ import android.os.Bundle;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
+    DatabaseHelper myDb;
     //DrawerLayout drawerLayout;
     //NavigationView navigationView;
     NavController navController;
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        myDb = new DatabaseHelper(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
