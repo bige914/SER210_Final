@@ -10,6 +10,10 @@
     <string name="medium">medium</string>
     <string name="hard">hard</string>
 
+    <string name="correct">0</string>
+    <string name="incorrect">0</string>
+    <string name="average">0</string>
+
     <string name="settings_description">
         This is the settings menu, here you can change the difficulty
         of the words, by difficulty we mean the length of the word between one of 3 choices

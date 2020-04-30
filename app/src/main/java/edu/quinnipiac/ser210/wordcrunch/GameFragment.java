@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -40,7 +41,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
     private NavController navController = null;
 
-    DatabaseHelper myDb;
+    private DatabaseHelper myDb;
 
 
     private String[] easy_mode;
@@ -75,6 +76,9 @@ public class GameFragment extends Fragment implements View.OnClickListener{
     private TextView user_view;//the displayed word
     private TextView user_choices;// the displayed characters
 
+    private TextView local_correct; //displays current correct score locally
+    private TextView local_incorrect; //displays current incorrect score locally
+
     private EditText user_input;//the letter the user types into the game, check value against 'alpha'
 
 
@@ -88,7 +92,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
     public GameFragment()
     {
-
+        //required empty constructor
     }
 
 
@@ -97,12 +101,22 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor editor = mPreferences.edit();
+
         myDb = new DatabaseHelper(getContext());
 
+        Cursor data = myDb.getData();
+        data.moveToFirst();
+
+        if (data.getCount() == 0){
+            Log.e("Database", "Not yet created, creating database");
+            boolean updateData = myDb.insertData(0,0,0);
+
+            if (updateData){
+                Toast.makeText(getContext(), "onCreate", Toast.LENGTH_SHORT).show();
+            }
+        }
         difficulty = mPreferences.getString(getString(R.string.difficulty), "");
     }
-
-
 
     private void wordGenerator(){
         String[] user_letters = {"","",""};
@@ -180,6 +194,8 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         user_view = (TextView) view.findViewById(R.id.word);
         user_choices = (TextView) view.findViewById(R.id.generated_letters);
         user_input = (EditText) view.findViewById(R.id.missing_letter);
+        local_correct = (TextView) view.findViewById(R.id.score_correct);
+        local_incorrect = (TextView) view.findViewById(R.id.score_incorrect);
     }
 
     @Override
@@ -196,12 +212,19 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             }
             else if (!input.equals(alpha)){
                 num_incorrect+=1;
+                String incorrectS = Integer.toString(num_incorrect);
+                local_incorrect.setText(incorrectS);
                 Toast.makeText(getContext(), "Oops wrong answer!", Toast.LENGTH_SHORT).show();
             }
             else {
                 num_correct+=1;
+                String correctS = Integer.toString(num_correct);
+                local_correct.setText(correctS);
                 Cursor data = myDb.getData();
-                //int tmp = data.getInt(1); INDEXOUTOFBOUNDS EXCEPTION DATABASE NOT CREATED
+                data.moveToFirst();
+                int correct = data.getInt(1);
+                Log.d("GameGetCorr", "current correct choices " + correct);
+                //int tmp = data.getInt(1); //INDEXOUTOFBOUNDS EXCEPTION DATABASE NOT CREATED
 
                 Toast.makeText(getContext(), "GOOD JOB!", Toast.LENGTH_SHORT).show();
             }
@@ -219,6 +242,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
     public void onPause() {
         int total = num_correct+num_incorrect;
         Cursor data = myDb.getData();
+        data.moveToFirst();
         if (data.getCount() == 0){
             Log.e("Database", "Database error nothing found");
         }
@@ -230,12 +254,11 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             int cur_total = data.getInt(3);
             int new_total = cur_total+total;
 
-            boolean isInserted = myDb.insertData(new_correct, new_incorrect, new_total);
-            if (isInserted){
+            boolean insertData = myDb.insertData(new_correct, new_incorrect, new_total);
+            if (insertData){
                 Toast.makeText(getContext(), "Data inserted", Toast.LENGTH_SHORT).show();
             }
         }
-
         super.onPause();
     }
 
