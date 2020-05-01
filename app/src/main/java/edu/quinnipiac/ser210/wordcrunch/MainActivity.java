@@ -5,7 +5,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+
+import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -18,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //myDb = new DatabaseHelper(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
@@ -31,5 +34,18 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController);
         //NavigationUI.setupWithNavController(navigationView, navController);
         //navigationView.setNavigationItemSelectedListener((NavigationView.OnNavigationItemSelectedListener) this);
+        myDb = new DatabaseHelper(this);
+
+        Cursor data = myDb.getData();
+        data.moveToFirst();
+        if (data.getCount() == 0){
+            Log.e("Database", "Not yet created, creating database");
+            boolean insertData = myDb.insertData(0,0,0);
+
+            if (insertData){
+                Log.d("MainActivity: ", "database initialized");
+
+            }
+        }
     }
 }

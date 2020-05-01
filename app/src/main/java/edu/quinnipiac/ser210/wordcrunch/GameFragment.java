@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
     private NavController navController = null;
 
     private DatabaseHelper myDb;
+    private Cursor cursor;
 
 
     private String[] easy_mode;
@@ -103,18 +105,10 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         SharedPreferences.Editor editor = mPreferences.edit();
 
         myDb = new DatabaseHelper(getContext());
+        cursor = myDb.getData();
+        Log.d("DBDump ", DatabaseUtils.dumpCursorToString(cursor));
 
-        Cursor data = myDb.getData();
-        data.moveToFirst();
 
-        if (data.getCount() == 0){
-            Log.e("Database", "Not yet created, creating database");
-            boolean updateData = myDb.insertData(0,0,0);
-
-            if (updateData){
-                Toast.makeText(getContext(), "onCreate", Toast.LENGTH_SHORT).show();
-            }
-        }
         difficulty = mPreferences.getString(getString(R.string.difficulty), "");
     }
 
@@ -220,10 +214,11 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                 num_correct+=1;
                 String correctS = Integer.toString(num_correct);
                 local_correct.setText(correctS);
-                Cursor data = myDb.getData();
-                data.moveToFirst();
-                int correct = data.getInt(1);
-                Log.d("GameGetCorr", "current correct choices " + correct);
+               // Cursor data = myDb.getData();
+                //data.moveToFirst();
+                //int correct = data.getInt(data.getColumnIndex(DatabaseHelper.COL_2));
+                //int correct = data.getInt(1);
+                //Log.d("GameGetCorr", "current correct choices " + correct);
                 //int tmp = data.getInt(1); //INDEXOUTOFBOUNDS EXCEPTION DATABASE NOT CREATED
 
                 Toast.makeText(getContext(), "GOOD JOB!", Toast.LENGTH_SHORT).show();
@@ -247,16 +242,19 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             Log.e("Database", "Database error nothing found");
         }
         else{
-            int cur_correct = data.getInt(1);
+            int cur_correct = data.getInt(data.getColumnIndex(DatabaseHelper.COL_2));
             int new_correct = cur_correct+num_correct;
-            int cur_incorrect = data.getInt(2);
+            int cur_incorrect = data.getInt(data.getColumnIndex(DatabaseHelper.COL_3));
             int new_incorrect = cur_incorrect+num_incorrect;
-            int cur_total = data.getInt(3);
+            int cur_total = data.getInt(data.getColumnIndex(DatabaseHelper.COL_4));
             int new_total = cur_total+total;
 
-            boolean insertData = myDb.insertData(new_correct, new_incorrect, new_total);
+//data.getColumnIndex(DatabaseHelper.COL_1)
+            data.moveToFirst();
+            boolean insertData = myDb.updateData(1,new_correct, new_incorrect, new_total);
             if (insertData){
                 Toast.makeText(getContext(), "Data inserted", Toast.LENGTH_SHORT).show();
+                Log.d("DBDump ", DatabaseUtils.dumpCursorToString(cursor));
             }
         }
         super.onPause();

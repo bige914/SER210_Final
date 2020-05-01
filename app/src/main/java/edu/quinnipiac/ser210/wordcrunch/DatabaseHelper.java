@@ -20,7 +20,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("+COL_1+" INTEGER PRIMARY KEY AUTOINCREMENT, CORRECT INTEGER, INCORRECT INTEGER, TOTAL INTEGER)");
+        //db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("+COL_1+" INTEGER PRIMARY KEY, CORRECT INTEGER, INCORRECT INTEGER, TOTAL INTEGER)");
     }
 
     @Override
@@ -45,24 +46,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getData(){
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor data = db.rawQuery("select * from " + TABLE_NAME, null);
         return data;
     }
 
-    public boolean updateData(String id, int correct, int incorrect, int total){
+    public boolean updateData(int id, int correct, int incorrect, int total){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_1, id);
         contentValues.put(COL_2, correct);
         contentValues.put(COL_3, incorrect);
         contentValues.put(COL_4, total);
-        db.update(TABLE_NAME, contentValues, "ID = ?", new String[] { id });
+        db.update(TABLE_NAME, contentValues, "ID = ?", new String[] {Integer.toString(id)});
         return  true;
-    }
-
-    public Integer deleteData (String id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_NAME, "ID = ?", new String[] { id });
     }
 }

@@ -2,6 +2,7 @@ package edu.quinnipiac.ser210.wordcrunch;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -26,9 +27,13 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
     private DatabaseHelper myDb;
     private int num_correct;
     private int num_incorrect;
-    private int success_average;
+    private double success_average;
+    private int avg;
     private int total;
 
+    TextView corrText;
+    TextView incorrText;
+    TextView valuePercent;
     public PerformanceFragment() {
         // Required empty public constructor
     }
@@ -38,9 +43,9 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
         myDb = new DatabaseHelper(getContext());
         Cursor data = myDb.getData();
         data.moveToFirst();
-        num_correct = data.getInt(1);
-        num_incorrect = data.getInt(2);
-        total = data.getInt(3);
+        num_correct = data.getInt(data.getColumnIndex(DatabaseHelper.COL_2));
+        num_incorrect = data.getInt(data.getColumnIndex(DatabaseHelper.COL_3));
+        total = data.getInt(data.getColumnIndex(DatabaseHelper.COL_4));
         super.onCreate(savedInstanceState);
     }
 
@@ -57,7 +62,9 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
             success_average = 0;
         }
         else{
-            success_average = (num_correct/total);
+            success_average = (double)num_correct/total;
+            success_average= success_average*100;
+            avg=(int)success_average;
         }
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
@@ -65,15 +72,15 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
         backButton.setOnClickListener(this);
         Button resetButton = (Button) view.findViewById(R.id.reset_button);
         resetButton.setOnClickListener(this);
-        TextView corrText = (TextView) view.findViewById(R.id.value_correct);
-        TextView incorrText = (TextView) view.findViewById(R.id.value_incorrect);
-        TextView valuePercent = (TextView) view.findViewById(R.id.value_percent);
+        corrText = (TextView) view.findViewById(R.id.value_correct);
+        incorrText = (TextView) view.findViewById(R.id.value_incorrect);
+        valuePercent = (TextView) view.findViewById(R.id.value_percent);
         String correct = Integer.toString(num_correct);
         Log.d("perfCorrect", correct);
         corrText.setText(correct);
         String incorrect = Integer.toString(num_incorrect);
         incorrText.setText(incorrect);
-        String average = Integer.toString(success_average);
+        String average = Integer.toString(avg);
         valuePercent.setText(average);
     }
 
@@ -84,8 +91,18 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
         }
         if (v.getId() == R.id.reset_button){
             //reset database
-            myDb.deleteData("0");
-            myDb.deleteData("1");
+            myDb = new DatabaseHelper(getContext());
+            boolean updateData = myDb.updateData(1,0,0,0);
+            if (updateData){
+                Log.d("Performance: ", "database reset");
+                corrText.setText("0");
+                incorrText.setText("0");
+                valuePercent.setText("0");
+                myDb = new DatabaseHelper(getContext());
+                Cursor cursor = myDb.getData();
+                Log.d("DBDump ", DatabaseUtils.dumpCursorToString(cursor));
+
+            }
         }
 
     }
