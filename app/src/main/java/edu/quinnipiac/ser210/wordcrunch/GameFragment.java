@@ -1,5 +1,7 @@
 package edu.quinnipiac.ser210.wordcrunch;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -15,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,8 +27,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Objects;
 import java.util.Random;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -83,7 +86,6 @@ public class GameFragment extends Fragment implements View.OnClickListener{
     private String definition; //full definition to be displayed
     private String[] definitionUrl = new String[4];
 
-
     private TargetWordHandler tWordHandler = new TargetWordHandler();
     private TargetDefinitionHandler tDefinitionHandler = new TargetDefinitionHandler();
 
@@ -94,7 +96,6 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         //required empty constructor
     }
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,7 +105,6 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         myDb = new DatabaseHelper(getContext());
         cursor = myDb.getData();
         Log.d("DBDump ", DatabaseUtils.dumpCursorToString(cursor));
-
 
         difficulty = mPreferences.getString(getString(R.string.difficulty), "");
     }
@@ -169,7 +169,6 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         wordGenerator();//generate word ??a? <-- this type of format
         new FetchWord().execute(complete_word);//send word for processing
         definitionUrl[0] = baseUrl1;
-
         definitionUrl[2] = endUrl1;
         definitionUrl[3] = apiKey;
         // Inflate the layout for this fragment
@@ -194,12 +193,18 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         definition_view = (TextView) view.findViewById(R.id.definition_tv);
     }
 
+    public static void hideKeyboardFrom(Context context, View view){
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     @Override
     public void onClick(View v) {
         if (v.getId()== R.id.back_button){
             navController.navigateUp();
         }
         if (v.getId() == R.id.go_button){
+            hideKeyboardFrom(Objects.requireNonNull(getContext()),v);
             Log.d("difficulty", difficulty);
             //send completed problem to be scored
             input = user_input.getText().toString();
@@ -217,13 +222,13 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                 String correctS = Integer.toString(num_correct);
                 local_correct.setText(correctS);
                 Toast.makeText(getContext(), "GOOD JOB!", Toast.LENGTH_SHORT).show();
+                wordGenerator();//generate word ??a? <-- this type of format
+                new FetchWord().execute(complete_word);//send word for processing
             }
         }
-
         if (v.getId() == R.id.new_word_button){
             wordGenerator();//generate word ??a? <-- this type of format
             new FetchWord().execute(complete_word);//send word for processing
-
         }
     }
 
@@ -254,12 +259,11 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         super.onPause();
     }
 
-    private class FetchWord extends AsyncTask<String,Void,String> {
+    private class FetchWord extends AsyncTask<String,Void,String> { //generates a word for the game
         @Override
         protected String doInBackground(String... words) {
             HttpURLConnection urlConnection =null;
             String word = baseUrl + words[0] + maxWords;
-
             try{
                 String tmp = word;
 
@@ -293,7 +297,6 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
             while((line = bufferedReader.readLine()) != null){
                 buffer.append(line + '\n');
-
             }
             if (bufferedReader!=null){
                 try{
@@ -304,8 +307,6 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                 }
             }
             Log.d("word", buffer.toString());
-
-
             return  tWordHandler.getWord(buffer.toString(), rand_select);
         }
 
@@ -313,10 +314,9 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         protected void onPostExecute(String result) {
 
             if(result != null){
-                //Bundle bundle = new Bundle();
                 Log.d("onPostExecute",result);
                 new_word = result;
-                definitionUrl[1] = result;
+                definitionUrl[1] = result; // set the word value into the Definition String array
                 char[] tmp = new_word.toCharArray();
 
                 tmp[rand_diff] = '_';
@@ -327,14 +327,13 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                 user_choices.setText(letters);
 
                 user_input.getText().clear();
-                new FetchDefinition().execute(definitionUrl);
+                new FetchDefinition().execute(definitionUrl);//make a call to get definition for word
             }else
                 Log.d("onPostExecute","null");
         }
     }
 
-
-    private class FetchDefinition extends AsyncTask<String,Void,String> {
+    private class FetchDefinition extends AsyncTask<String,Void,String> { //generate a definition with given word
         @Override
         protected String doInBackground(String... words) {
             HttpURLConnection urlConnection =null;
@@ -363,7 +362,6 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                 if(urlConnection !=null)
                     urlConnection.disconnect();
             }
-
             return definitionUrl;
         }
 
@@ -373,7 +371,6 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
             while((line = bufferedReader.readLine()) != null){
                 buffer.append(line + '\n');
-
             }
             if (bufferedReader!=null){
                 try{
@@ -384,14 +381,11 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                 }
             }
             Log.d("word", buffer.toString());
-
-
             return  tDefinitionHandler.getDefinition(buffer.toString());
         }
 
         @Override
         protected void onPostExecute(String result) {
-
             if(result != null){
                 Log.d("onPostExecute",result);
                 definition = result;
@@ -400,7 +394,6 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                 Log.d("onPostExecute","null");
         }
     }
-
 }
 
 

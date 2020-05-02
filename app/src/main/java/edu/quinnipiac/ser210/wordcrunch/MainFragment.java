@@ -31,7 +31,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private ShareActionProvider provider;
     private NavController navController = null;
     private DatabaseHelper myDb;
-    Toolbar toolbar;
 
     private int num_correct;
     private int num_incorrect;
@@ -44,7 +43,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private String average;
 
     private String parentStats;// performance stats to be sent through text msg
-
 
     public MainFragment() {
         // Required empty public constructor
@@ -63,11 +61,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         setHasOptionsMenu(true);
     }
 
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-
         inflater.inflate(R.menu.menu_main, menu);
         MenuItem shareItem = menu.findItem(R.id.action_share);
         super.onCreateOptionsMenu(menu, inflater);
@@ -80,7 +76,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         switch (id){
             case android.R.id.home: this.navController.navigateUp();
             return true;
@@ -99,13 +94,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             if (provider != null) {
                 provider.setShareIntent(intent);
             } else
-
                 return true;
         }
-
         return false;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
