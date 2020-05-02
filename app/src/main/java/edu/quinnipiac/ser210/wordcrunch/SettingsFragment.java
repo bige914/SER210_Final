@@ -1,15 +1,12 @@
 package edu.quinnipiac.ser210.wordcrunch;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,17 +15,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-
 /**
  * A simple {@link Fragment} subclass.
  */
 public class SettingsFragment extends Fragment implements View.OnClickListener{
     private TextView diffSet;
-    //private String default_diff;
     private SharedPreferences.Editor editor;
     private SharedPreferences sharedPreferences;
     private NavController navController = null;
-    public static final String SHARED_PREFS = "sharedPrefs";
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -37,9 +31,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        //sharedPreferences = getContext().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        //editor = sharedPreferences.edit();
     }
 
     @Override
@@ -54,10 +45,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
         super.onViewCreated(view, savedInstanceState);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-
-
-
         navController = Navigation.findNavController(view);
+
         Button backButton = (Button) view.findViewById(R.id.back_button);
         backButton.setOnClickListener(this);
         Button easyButton = (Button) view.findViewById(R.id.easy_button);

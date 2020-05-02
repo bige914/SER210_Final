@@ -31,9 +31,9 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
     private int avg;
     private int total;
 
-    TextView corrText;
-    TextView incorrText;
-    TextView valuePercent;
+    private TextView corrText;
+    private TextView incorrText;
+    private TextView valuePercent;
     public PerformanceFragment() {
         // Required empty public constructor
     }
@@ -101,7 +101,6 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
                 myDb = new DatabaseHelper(getContext());
                 Cursor cursor = myDb.getData();
                 Log.d("DBDump ", DatabaseUtils.dumpCursorToString(cursor));
-
             }
         }
 
