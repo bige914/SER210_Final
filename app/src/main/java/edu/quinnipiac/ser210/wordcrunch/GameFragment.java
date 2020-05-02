@@ -1,5 +1,11 @@
 package edu.quinnipiac.ser210.wordcrunch;
-
+/**
+ * GameFragment fragment, accepts inputs from TextEdit, has buttons for answer submission and new game
+ * game where user will get a word with a missing letter and must fill in with correct letter among 3 choices
+ *
+ * @authors Ellsworth Evarts IV
+ * @date 5/02/2020
+ */
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;

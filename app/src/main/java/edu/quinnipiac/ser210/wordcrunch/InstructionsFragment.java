@@ -1,5 +1,11 @@
 package edu.quinnipiac.ser210.wordcrunch;
-
+/**
+ * InstructionsFragment fragment,
+ *Offers parent/guardian instructions on how to use the application.
+ *
+ * @authors Ellsworth Evarts IV
+ * @date 5/02/2020
+ */
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,19 +23,13 @@ import android.widget.Button;
 public class InstructionsFragment extends Fragment implements View.OnClickListener{
     private NavController navController = null;
 
-
-
-
     public InstructionsFragment() {
         // Required empty public constructor
     }
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -46,8 +46,6 @@ public class InstructionsFragment extends Fragment implements View.OnClickListen
         Button backButton = (Button) view.findViewById(R.id.back_button);
         backButton.setOnClickListener(this);
     }
-
-
 
     @Override
     public void onClick(View v) {

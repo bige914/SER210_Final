@@ -1,5 +1,11 @@
 package edu.quinnipiac.ser210.wordcrunch;
-
+/**
+ * MainActivity activity, acts as NavHost for nav_graph, initializes database if it does not exist,
+ * toolbar creation for menu use in MainFragment
+ *
+ * @authors Ellsworth Evarts IV
+ * @date 5/02/2020
+ */
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
@@ -9,9 +15,6 @@ import androidx.navigation.ui.NavigationUI;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
     DatabaseHelper myDb;

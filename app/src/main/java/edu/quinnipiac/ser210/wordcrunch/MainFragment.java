@@ -1,5 +1,10 @@
 package edu.quinnipiac.ser210.wordcrunch;
-
+/**
+ * MainFragment fragment, acts as splash screen for app, acts as home fragment for nav_graph
+ *
+ * @authors Ellsworth Evarts IV
+ * @date 5/02/2020
+ */
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;

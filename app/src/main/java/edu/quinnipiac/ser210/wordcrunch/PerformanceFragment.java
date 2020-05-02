@@ -1,16 +1,19 @@
 package edu.quinnipiac.ser210.wordcrunch;
-
-import android.content.Intent;
+/**
+ * PerformanceFragment fragment, gets and displays user scores/percent of answers correct from database,
+ * also has added ability to reset values within the database Table to default of 0.
+ *
+ * @authors Ellsworth Evarts IV
+ * @date 5/02/2020
+ */
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;

@@ -1,5 +1,12 @@
 package edu.quinnipiac.ser210.wordcrunch;
-
+/**
+ * SettingsFragment fragment, sets difficulty of the game based on length of word,
+ *user picks difficulty by pressing buttons for easy, medium, hard, current difficulty is displayed
+ * on screen
+ *
+ * @authors Ellsworth Evarts IV
+ * @date 5/02/2020
+ */
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;

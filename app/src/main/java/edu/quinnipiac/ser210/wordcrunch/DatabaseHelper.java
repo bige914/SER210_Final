@@ -1,5 +1,11 @@
 package edu.quinnipiac.ser210.wordcrunch;
-
+/**
+ * DataBaseHelper class, helper class used to create, interact with the Database and its Table
+ * has methods for Database and Table creation, ability to add/edit/get data of Table
+ *
+ * @authors Ellsworth Evarts IV
+ * @date 5/02/2020
+ */
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

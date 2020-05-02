@@ -1,5 +1,11 @@
 package edu.quinnipiac.ser210.wordcrunch;
-
+/**
+ * TargetWordHandler class, used to pull out a word from JSON text that is needed for other
+ * components of the application.
+ *
+ * @authors Ellsworth Evarts IV
+ * @date 5/02/2020
+ */
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
