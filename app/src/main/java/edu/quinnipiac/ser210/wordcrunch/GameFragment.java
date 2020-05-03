@@ -210,7 +210,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             navController.navigateUp();
         }
         if (v.getId() == R.id.go_button){
-            hideKeyboardFrom(Objects.requireNonNull(getContext()),v);
+            hideKeyboardFrom(getContext(),v);
             Log.d("difficulty", difficulty);
             //send completed problem to be scored
             input = user_input.getText().toString();
